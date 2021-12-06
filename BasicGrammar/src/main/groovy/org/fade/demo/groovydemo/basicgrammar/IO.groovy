@@ -1,3 +1,4 @@
+package org.fade.demo.groovydemo.basicgrammar
 /**
 *   groovy io 操作
 *
