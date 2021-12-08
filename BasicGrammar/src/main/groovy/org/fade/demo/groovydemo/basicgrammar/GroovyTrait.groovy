@@ -15,6 +15,9 @@ class GroovyTrait {
         instance.thisKeyword()
         instance.interfaces()
         instance.properties()
+        instance.privateFields()
+        instance.publicFields()
+        instance.compositionOfBehaviors()
     }
 
     /*basic use*/
@@ -162,5 +165,61 @@ class GroovyTrait {
     }
 
     /*properties*/
+
+    /*private fields*/
+
+    trait Counter {
+        private int count = 0
+        int count() { count += 1; count }
+    }
+    class FooPrivateFields implements Counter {}
+
+    void privateFields() {
+        def f = new FooPrivateFields()
+        assert f.count() == 1
+        assert f.count() == 2
+    }
+
+    /*private fields*/
+
+    /*public fields*/
+
+    trait NamedPublicFields {
+        public String name
+    }
+
+    class PersonPublicFields implements NamedPublicFields {}
+
+    void publicFields() {
+        def p = new PersonPublicFields()
+        p.org_fade_demo_groovydemo_basicgrammar_GroovyTrait$NamedPublicFields__name = 'Bob'
+    }
+
+    /*public fields*/
+
+    /*Composition of behaviors*/
+
+    trait FlyingAbilityComposition {
+        String fly() { "I'm flying!" }
+    }
+    trait SpeakingAbilityComposition {
+        String speak() { "I'm speaking!" }
+    }
+
+    class Duck implements FlyingAbilityComposition, SpeakingAbilityComposition {}
+
+    void compositionOfBehaviors() {
+        def d = new Duck()
+        assert d.fly() == "I'm flying!"
+        assert d.speak() == "I'm speaking!"
+    }
+
+    /*Composition of behaviors*/
+
+    /*Overriding default methods*/
+
+    
+
+    /*Overriding default methods*/
 
 }
