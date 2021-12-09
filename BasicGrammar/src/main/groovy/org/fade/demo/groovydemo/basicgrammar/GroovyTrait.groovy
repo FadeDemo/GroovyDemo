@@ -18,6 +18,10 @@ class GroovyTrait {
         instance.privateFields()
         instance.publicFields()
         instance.compositionOfBehaviors()
+        instance.overridingDefaultMethods()
+        instance.simpleInheritance()
+        instance.dynamicCode()
+        instance.dynamicMethods()
     }
 
     /*basic use*/
@@ -218,8 +222,100 @@ class GroovyTrait {
 
     /*Overriding default methods*/
 
-    
+    class DuckOverride implements FlyingAbilityComposition, SpeakingAbilityComposition {
+        String quack() { "Quack!" }
+        String speak() { quack() }
+    }
+
+    void overridingDefaultMethods() {
+        def d = new DuckOverride()
+        assert d.fly() == "I'm flying!"
+        assert d.quack() == "Quack!"
+        assert d.speak() == "Quack!"
+    }
 
     /*Overriding default methods*/
+
+    /*Simple inheritance*/
+
+    trait NamedSimpleInheritance {
+        String name
+    }
+    trait Polite extends NamedSimpleInheritance {
+        String introduce() { "Hello, I am $name" }
+    }
+
+    class PersonSimpleInheritance implements Polite {}
+
+    void simpleInheritance() {
+        def p = new PersonSimpleInheritance(name: 'Alice')
+        assert p.introduce() == 'Hello, I am Alice'
+    }
+
+    /*Simple inheritance*/
+
+    /*Multiple inheritance*/
+
+    trait WithId {
+        Long id
+    }
+    trait WithName {
+        String name
+    }
+
+    trait IdentifiedImplements implements WithId, WithName {}
+
+    /*Multiple inheritance*/
+
+    /*Dynamic code*/
+
+    trait SpeakingDuck {
+        String speak() { quack() }
+    }
+
+    class DuckDynamicCode implements SpeakingDuck {
+        String methodMissing(String name, args) {
+            "${name.capitalize()}!"
+        }
+    }
+
+    void dynamicCode() {
+        def d = new DuckDynamicCode()
+        assert d.speak() == 'Quack!'
+    }
+
+    /*Dynamic code*/
+
+    /*Dynamic methods in a trait*/
+
+    trait DynamicObject {
+        private Map props = [:]
+        def methodMissing(String name, args) {
+            name.toUpperCase()
+        }
+        def propertyMissing(String prop) {
+            props[prop]
+        }
+        void setProperty(String prop, Object value) {
+            props[prop] = value
+        }
+    }
+
+    class Dynamic implements DynamicObject {
+        String existingProperty = 'ok'
+        String existingMethod() { 'ok' }
+    }
+
+    void dynamicMethods() {
+        def d = new Dynamic()
+        assert d.existingProperty == 'ok'
+        assert d.foo == null
+        d.foo = 'bar'
+        assert d.foo == 'bar'
+        assert d.existingMethod() == 'ok'
+        assert d.someMethod() == 'SOMEMETHOD'
+    }
+
+    /*Dynamic methods in a trait*/
 
 }
