@@ -22,6 +22,11 @@ class GroovyTrait {
         instance.simpleInheritance()
         instance.dynamicCode()
         instance.dynamicMethods()
+        instance.defaultConflictResolution()
+        instance.userConflictResolution()
+        instance.implementingATraitAtRuntime()
+        instance.implementingMultipleTraitAtOnce()
+        instance.chainingBehavior()
     }
 
     /*basic use*/
@@ -317,5 +322,98 @@ class GroovyTrait {
     }
 
     /*Dynamic methods in a trait*/
+
+    /*Default conflict resolution*/
+
+    trait A {
+        String exec() { 'A' }
+    }
+    trait B {
+        String exec() { 'B' }
+    }
+    class C implements A,B {}
+
+    void defaultConflictResolution() {
+        def c = new C()
+        assert c.exec() == 'B'
+    }
+
+    /*Default conflict resolution*/
+
+    /*User conflict resolution*/
+
+    class D implements A,B {
+        String exec() { A.super.exec() }
+    }
+
+    void userConflictResolution() {
+        def d = new D()
+        assert d.exec() == 'A'
+    }
+
+    /*User conflict resolution*/
+
+    /*Implementing a trait at runtime*/
+
+    trait Extra {
+        String extra() { "I'm an extra method" }
+    }
+    class Something {
+        String doSomething() { 'Something' }
+    }
+
+    void implementingATraitAtRuntime() {
+//        def s = new Something() as Extra
+        def s = (new Something()).withTraits Extra
+        println s.extra()
+        println s.doSomething()
+    }
+
+    /*Implementing a trait at runtime*/
+
+    /*Implementing multiple traits at once*/
+
+    trait ARuntime { void methodFromA() {} }
+
+    trait BRuntime { void methodFromB() {} }
+
+    class CRuntime {}
+
+    void implementingMultipleTraitAtOnce() {
+        def c = new CRuntime()
+        def d = c.withTraits ARuntime, BRuntime
+        d.methodFromA()
+        d.methodFromB()
+    }
+
+    /*Implementing multiple traits at once*/
+
+    /*Chaining behavior*/
+
+    interface MessageHandler {
+        void on(String message, Map payload)
+    }
+
+    trait DefaultHandler implements MessageHandler {
+        void on(String message, Map payload) {
+            println "Received $message with payload $payload"
+        }
+    }
+
+    trait LoggingHandler implements MessageHandler {
+        void on(String message, Map payload) {
+            println "Seeing $message with payload $payload"
+            super.on(message, payload)
+        }
+    }
+
+    class HandlerWithLogger implements DefaultHandler, LoggingHandler {}
+
+    void chainingBehavior() {
+        def loggingHandler = new HandlerWithLogger()
+        loggingHandler.on('test logging', [:])
+    }
+
+    /*Chaining behavior*/
 
 }
