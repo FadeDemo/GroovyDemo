@@ -28,6 +28,10 @@ class GroovyTrait {
         instance.implementingMultipleTraitAtOnce()
         instance.chainingBehavior()
         instance.semanticsOfSuperInsideATrait()
+        instance.samTypeCoercion()
+//        instance.differenceWithMixins()
+        instance.staticMethodsAndEtc()
+        instance.inheritanceOfStateGotchas()
     }
 
     /*basic use*/
@@ -434,5 +438,87 @@ class GroovyTrait {
     }
 
     /*Semantics of super inside a trait*/
+
+    /*SAM type coercion*/
+
+    trait GreeterSAM {
+        String greet() { "Hello $name" }
+        abstract String getName()
+    }
+
+    void greet(GreeterSAM g) { println g.greet() }
+
+    void samTypeCoercion() {
+        GreeterSAM greeter = { 'Alice' }
+        greet { 'Alice' }
+    }
+
+    /*SAM type coercion*/
+
+    /*Differences with mixins*/
+
+    class AMixins { String methodFromA() { 'A' } }
+
+    class BMixins { String methodFromB() { 'B' } }
+
+    void differenceWithMixins() {
+        AMixins.metaClass.mixin BMixins
+        def o = new AMixins()
+        assert o.methodFromA() == 'A'
+        assert o.methodFromB() == 'B'
+        assert o instanceof AMixins
+        assert !(o instanceof BMixins)
+    }
+
+    /*Differences with mixins*/
+
+    /*Static methods, properties and fields*/
+
+    trait TestHelper {
+        public static boolean CALLED = false
+        static void init() {
+            CALLED = true
+        }
+    }
+    class FooStatic implements TestHelper {}
+
+    void staticMethodsAndEtc() {
+        FooStatic.init()
+        assert FooStatic.org_fade_demo_groovydemo_basicgrammar_GroovyTrait$TestHelper__CALLED
+    }
+
+    /*Static methods, properties and fields*/
+
+    /*Inheritance of state gotchas*/
+
+    trait IntCouple {
+        int x = 1
+        int y = 2
+        int sum() { x+y }
+        int sumWithGetter() { getX()+getY() }
+    }
+
+    class BaseElem implements IntCouple {
+        int f() { sum() }
+    }
+
+    class Elem implements IntCouple {
+        int x = 3
+        int y = 4
+        int f() { sum() }
+        int g() {
+            sumWithGetter()
+        }
+    }
+
+    void inheritanceOfStateGotchas() {
+        def base = new BaseElem()
+        assert base.f() == 3
+        def elem = new Elem()
+        assert elem.f() == 3
+        assert elem.g() == 7
+    }
+
+    /*Inheritance of state gotchas*/
 
 }
