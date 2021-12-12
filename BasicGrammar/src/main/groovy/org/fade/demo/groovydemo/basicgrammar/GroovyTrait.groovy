@@ -27,6 +27,7 @@ class GroovyTrait {
         instance.implementingATraitAtRuntime()
         instance.implementingMultipleTraitAtOnce()
         instance.chainingBehavior()
+        instance.semanticsOfSuperInsideATrait()
     }
 
     /*basic use*/
@@ -415,5 +416,23 @@ class GroovyTrait {
     }
 
     /*Chaining behavior*/
+
+    /*Semantics of super inside a trait*/
+
+    trait Filtering {
+        StringBuilder append(String str) {
+            def subst = str.replace('o','')
+            super.append(subst)
+        }
+        String toString() { super.toString() }
+    }
+
+    void semanticsOfSuperInsideATrait() {
+        def sb = new StringBuilder().withTraits Filtering
+        sb.append('Groovy')
+        assert sb.toString() == 'Grvy'
+    }
+
+    /*Semantics of super inside a trait*/
 
 }
