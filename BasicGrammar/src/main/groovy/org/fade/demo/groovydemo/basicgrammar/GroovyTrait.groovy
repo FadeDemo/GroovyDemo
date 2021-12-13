@@ -1,5 +1,8 @@
 package org.fade.demo.groovydemo.basicgrammar
 
+import groovy.transform.CompileStatic
+import groovy.transform.SelfType
+
 /**
 * @author fade
 * @since 2021/12/06
@@ -32,6 +35,7 @@ class GroovyTrait {
 //        instance.differenceWithMixins()
         instance.staticMethodsAndEtc()
         instance.inheritanceOfStateGotchas()
+        instance.selfTypes()
     }
 
     /*basic use*/
@@ -520,5 +524,38 @@ class GroovyTrait {
     }
 
     /*Inheritance of state gotchas*/
+
+    /*Self types*/
+
+    class CommunicationService {
+        static void sendMessage(String from, String to, String message) {
+            println "$from sent [$message] to $to"
+        }
+    }
+
+    class Device { String id }
+
+    class SecurityService {
+        static void check(Device d) { if (d.id==null) throw new SecurityException() }
+    }
+
+    @SelfType(Device)
+    @CompileStatic
+    trait Communicating {
+        void sendMessage(Device to, String message) {
+            SecurityService.check(this)
+            CommunicationService.sendMessage(id, to.id, message)
+        }
+    }
+
+    class MyDevice extends Device implements Communicating {}
+
+    void selfTypes() {
+        def bob = new MyDevice(id:'Bob')
+        def alice = new MyDevice(id:'Alice')
+        bob.sendMessage(alice,'secret')
+    }
+
+    /*Self types*/
 
 }
