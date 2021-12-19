@@ -1,5 +1,7 @@
 package org.fade.demo.groovydemo.basicgrammar
 
+import groovy.transform.AnnotationCollector
+
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
@@ -15,11 +17,25 @@ class GroovyAnnotation {
         // closure作为值传递
         // fixme Modifier - No such property
 //        closureAsValue()
+        declareMetaAnnotation()
+        overrideMetaAnnotationParameter()
     }
 
     static void closureAsValue() {
         def tasks = Runner.run(Tasks)
         assert tasks.result == [1, 'JDK 6'] as Set
+    }
+
+    static void declareMetaAnnotation() {
+        def annotations = MyTransactionalService.annotations*.annotationType()
+        assert (Service in annotations)
+        assert (Transactional in annotations)
+    }
+
+    static void overrideMetaAnnotationParameter() {
+        println Joe.getAnnotation(Foo).value()
+        println Joe.getAnnotation(Bar).value()
+        println Joe.getAnnotation(Foo).test()
     }
 
 }
@@ -71,4 +87,49 @@ class Tasks {
     }
 
 }
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface Service {
+
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface Transactional {
+
+}
+
+@Service
+@Transactional
+@AnnotationCollector
+@interface TransactionalService {
+
+}
+
+@TransactionalService
+class MyTransactionalService {
+
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface Foo {
+
+    String value()
+
+    int test()
+
+}
+@Retention(RetentionPolicy.RUNTIME)
+@interface Bar {
+
+    String value()
+
+}
+
+@Foo(value = "a", test = 5)
+@Bar(value = "b")
+@AnnotationCollector
+@interface FooBar {}
+
+@FooBar(value = "a", test = 10)
+class Joe {}
 
