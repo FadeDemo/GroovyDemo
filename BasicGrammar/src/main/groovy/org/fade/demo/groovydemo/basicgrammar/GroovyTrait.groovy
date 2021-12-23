@@ -540,7 +540,7 @@ class GroovyTrait {
     }
 
     @SelfType(Device)
-    @CompileStatic
+//    @CompileStatic
     trait Communicating {
         void sendMessage(Device to, String message) {
             SecurityService.check(this)
