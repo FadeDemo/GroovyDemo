@@ -28,6 +28,9 @@ abc'''
         def i = '''a
     |b
    |c'''
+        def j = "str"
+        def k = "${j}"
+        def l = "The sum of 1 and 2 is equal to ${def x = 1; def y = 2; x + y}"
         println a
         println b
         println c
@@ -47,6 +50,29 @@ abc'''
         // stripMargin方法作用是去除String中每一行最前面的空格和控制符（\n）除外
         // 空格和控制符后面需跟着 |
         println StringGroovyMethods.stripMargin(i)
+        println j
+        println k
+        println l
+        assert '$5' == "\$5"
+        assert '${name}' == "\${name}"
+        def sParameterLessClosure = "1 + 2 == ${-> 3}"
+        assert sParameterLessClosure == '1 + 2 == 3'
+        def sOneParamClosure = "1 + 2 == ${ w -> w << 3}"
+        assert sOneParamClosure == '1 + 2 == 3'
+        // 闭包${}的懒执行
+        def number = 1
+        def eagerGString = "value == ${number}"
+        def lazyGString = "value == ${ -> number }"
+        assert eagerGString == "value == 1"
+        assert lazyGString ==  "value == 1"
+        number = 2
+        assert eagerGString == "value == 1"
+        assert lazyGString ==  "value == 2"
+        // GString作Map的key
+        // 应避免这种情况
+        def key = "a"
+        def m = ["${key}": "letter ${key}"]
+        assert m["a"] == null
     }
 
 }
