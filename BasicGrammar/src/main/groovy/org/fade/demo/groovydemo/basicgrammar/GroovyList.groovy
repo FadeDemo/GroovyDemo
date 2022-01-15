@@ -13,6 +13,12 @@ class GroovyList {
         def c = [3, 4]
         println a.plus(b)
         println a.minus(c)
+        println a[0]
+        println a[-1]
+        println a[0..-1]
+        def d = [1]
+        d << 2
+        println d[0..-1]
     }
 
 }
