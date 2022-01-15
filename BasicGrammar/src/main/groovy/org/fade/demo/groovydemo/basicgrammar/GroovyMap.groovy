@@ -12,6 +12,12 @@ class GroovyMap {
         println a
         println b
         println c
+        def d = [1: 2]
+        println d[1]
+        def e = [d: 1]
+        assert !e.containsKey(d)
+        def f = [(d): 1]
+        assert f.containsKey(d)
     }
 
 }
