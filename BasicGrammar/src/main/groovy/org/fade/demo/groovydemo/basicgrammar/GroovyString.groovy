@@ -73,6 +73,29 @@ abc'''
         def key = "a"
         def m = ["${key}": "letter ${key}"]
         assert m["a"] == null
+        // 斜杠字符串
+        def slashString = /abc/
+        println slashString
+        slashString = /\abc/
+        println slashString
+        slashString = /a
+bc/
+        println slashString
+        slashString = /ab${key}/
+        println slashString
+        slashString = /ab${'/'}/
+        println slashString
+        def dollarSlashString = $/abc/$
+        println dollarSlashString
+        dollarSlashString = $/ab$$a/$
+        println dollarSlashString
+        dollarSlashString = $/ab$slashString/$
+        println dollarSlashString
+        dollarSlashString = $/ab${slashString}/$
+        println dollarSlashString
+        dollarSlashString = $/ab
+c/$
+        println dollarSlashString
     }
 
 }
