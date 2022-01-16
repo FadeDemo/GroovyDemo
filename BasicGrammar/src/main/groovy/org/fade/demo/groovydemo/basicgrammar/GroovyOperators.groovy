@@ -35,6 +35,7 @@ class GroovyOperators {
         subscript()
         safeIndexOperator()
         membershipOperator()
+        identityOperator()
     }
 
     @EqualsAndHashCode
@@ -292,6 +293,14 @@ class GroovyOperators {
         assert ('Emmy' in list)
         // in operator is equal to isCase method
         assert list.isCase("Emmy")
+    }
+
+    static void identityOperator() {
+        // 判断是否是同一个对象
+        def list1 = ['Groovy 1.8','Groovy 2.0','Groovy 2.3']
+        def list2 = ['Groovy 1.8','Groovy 2.0','Groovy 2.3']
+        assert list1 == list2
+        assert !list1.is(list2)
     }
 
 }
