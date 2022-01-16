@@ -37,6 +37,8 @@ class GroovyOperators {
         membershipOperator()
         identityOperator()
         coercionOperator()
+        callOperator()
+        operatorOverloading()
     }
 
     @EqualsAndHashCode
@@ -339,6 +341,39 @@ class GroovyOperators {
         def p = u as Identifiable
         assert p instanceof Identifiable
         assert !(p instanceof CoercionUser)
+    }
+
+    static class MyCallable {
+        int call(int x) {
+            2*x
+        }
+    }
+
+    static void callOperator() {
+        def mc = new MyCallable()
+        assert mc.call(2) == 4
+        assert mc(2) == 4
+    }
+
+    static class Bucket {
+        int size
+
+        Bucket(int size) { this.size = size }
+
+        Bucket plus(Bucket other) {
+            return new Bucket(this.size + other.size)
+        }
+
+        Bucket plus(int capacity) {
+            return new Bucket(this.size + capacity)
+        }
+    }
+
+    static void operatorOverloading() {
+        def b1 = new Bucket(4)
+        def b2 = new Bucket(11)
+        assert (b1 + b2).size == 15
+        assert (b1 + 11).size == 15
     }
 
 }
