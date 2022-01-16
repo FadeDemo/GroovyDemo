@@ -34,6 +34,7 @@ class GroovyOperators {
         spaceShipOperator()
         subscript()
         safeIndexOperator()
+        membershipOperator()
     }
 
     @EqualsAndHashCode
@@ -284,6 +285,13 @@ class GroovyOperators {
     static void safeIndexOperator() {
         def array = null
         println array?[1]
+    }
+
+    static void membershipOperator() {
+        def list = ['Grace','Rob','Emmy']
+        assert ('Emmy' in list)
+        // in operator is equal to isCase method
+        assert list.isCase("Emmy")
     }
 
 }
