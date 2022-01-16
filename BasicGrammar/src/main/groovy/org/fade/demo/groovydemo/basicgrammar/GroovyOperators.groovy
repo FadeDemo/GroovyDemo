@@ -31,6 +31,7 @@ class GroovyOperators {
         spreadList()
         spreadMap()
         range()
+        spaceShipOperator()
     }
 
     @EqualsAndHashCode
@@ -232,6 +233,15 @@ class GroovyOperators {
         def b = YearMonth.of(2021, 4)
         def c = a..b
         println c.collect()
+    }
+
+    static void spaceShipOperator() {
+        // 与compareTo方法等价
+        assert (1 <=> 1) == 0
+        assert (1 <=> 2) == -1
+        assert (2 <=> 1) == 1
+        assert ('a' <=> 'z') == -1
+        assert (YearMonth.of(2021, 1) <=> YearMonth.of(2021, 2)) == -1
     }
 
 }
