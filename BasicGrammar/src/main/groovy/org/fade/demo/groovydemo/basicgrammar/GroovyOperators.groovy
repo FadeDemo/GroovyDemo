@@ -33,6 +33,7 @@ class GroovyOperators {
         range()
         spaceShipOperator()
         subscript()
+        safeIndexOperator()
     }
 
     @EqualsAndHashCode
@@ -278,6 +279,11 @@ class GroovyOperators {
         assert user[1] == 'Alex'
         user[1] = 'Bob'
         assert user.name == 'Bob'
+    }
+
+    static void safeIndexOperator() {
+        def array = null
+        println array?[1]
     }
 
 }
