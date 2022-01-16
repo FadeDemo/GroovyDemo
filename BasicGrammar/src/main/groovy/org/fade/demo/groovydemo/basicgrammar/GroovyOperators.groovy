@@ -36,6 +36,7 @@ class GroovyOperators {
         safeIndexOperator()
         membershipOperator()
         identityOperator()
+        coercionOperator()
     }
 
     @EqualsAndHashCode
@@ -301,6 +302,43 @@ class GroovyOperators {
         def list2 = ['Groovy 1.8','Groovy 2.0','Groovy 2.3']
         assert list1 == list2
         assert !list1.is(list2)
+    }
+
+    static class Identifiable {
+        String name
+    }
+    static class CoercionUser {
+        Long id
+        String name
+        def asType(Class target) {
+            if (target == Identifiable) {
+                return new Identifiable(name: name)
+            }
+            throw new ClassCastException("User cannot be coerced into $target")
+        }
+    }
+
+    static void coercionOperator() {
+        Integer x = 123
+        String s
+        try {
+            // 这种类型的强制转换不会考虑值是否兼容
+            // fixme 此示例并不会报错
+            s = (String) x
+            assert !s.is(x)
+        } catch(Exception e) {
+            e.printStackTrace()
+        }
+        x = 123
+        // as 运算符则会自动把值的类型修改过来
+        s = x as String
+        // 除非目标对象和源对象类型相同，不然会创建一个新的对象
+        assert !s.is(x)
+        // 使用as运算符需要定义规则（即asType方法）
+        def u = new CoercionUser(name: 'Xavier')
+        def p = u as Identifiable
+        assert p instanceof Identifiable
+        assert !(p instanceof CoercionUser)
     }
 
 }
