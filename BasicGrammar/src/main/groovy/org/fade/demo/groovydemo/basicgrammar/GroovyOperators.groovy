@@ -2,6 +2,9 @@ package org.fade.demo.groovydemo.basicgrammar
 
 import groovy.transform.EqualsAndHashCode
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 /**
 *   groovy运算符
 *
@@ -16,6 +19,9 @@ class GroovyOperators {
         safeNavigationOperator()
         directFieldAccessOperator()
         methodPointerOperator()
+        patternOperator()
+        findOperator()
+        matchOperator()
     }
 
     @EqualsAndHashCode
@@ -80,6 +86,29 @@ class GroovyOperators {
         def reference = this.&doSomething
         assert reference('foo') == 'FOO'
         assert reference(123)   == 246
+    }
+
+    static void patternOperator() {
+        def p = ~/foo/
+        assert p instanceof Pattern
+    }
+
+    static void findOperator() {
+        def text = "some text to match"
+        def m = text =~ /match/
+        assert m instanceof Matcher
+        if (!m) {
+            throw new RuntimeException("Oops, text not found!")
+        }
+    }
+
+    static void matchOperator() {
+        def text = "some text to match"
+        def m = text ==~ /match/
+        assert m instanceof Boolean
+        if (m) {
+            throw new RuntimeException("Should not reach that point!")
+        }
     }
 
 }
