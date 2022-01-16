@@ -3,9 +3,9 @@ package org.fade.demo.groovydemo.basicgrammar
 import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 
+import java.time.YearMonth
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
 /**
 *   groovy运算符
 *
@@ -30,6 +30,7 @@ class GroovyOperators {
         spreadMethodArguments()
         spreadList()
         spreadMap()
+        range()
     }
 
     @EqualsAndHashCode
@@ -224,6 +225,13 @@ class GroovyOperators {
         m1 = [c:3, d:4]
         map = [a:1, b:2, *:m1, d: 8]
         assert map == [a:1, b:2, c:3, d:8]
+    }
+
+    static void range() {
+        def a = YearMonth.of(2021, 1)
+        def b = YearMonth.of(2021, 4)
+        def c = a..b
+        println c.collect()
     }
 
 }
