@@ -32,6 +32,7 @@ class GroovyOperators {
         spreadMap()
         range()
         spaceShipOperator()
+        subscript()
     }
 
     @EqualsAndHashCode
@@ -242,6 +243,41 @@ class GroovyOperators {
         assert (2 <=> 1) == 1
         assert ('a' <=> 'z') == -1
         assert (YearMonth.of(2021, 1) <=> YearMonth.of(2021, 2)) == -1
+    }
+
+    static class SubscriptUser {
+        Long id
+        String name
+        def getAt(int i) {
+            switch (i) {
+                case 0: return id
+                case 1: return name
+            }
+            throw new IllegalArgumentException("No such element $i")
+        }
+        void putAt(int i, def value) {
+            switch (i) {
+                case 0: id = value; return
+                case 1: name = value; return
+            }
+            throw new IllegalArgumentException("No such element $i")
+        }
+    }
+
+    static void subscript() {
+        def list = [0,1,2,3,4]
+        assert list[2] == 2
+        list[2] = 4
+        assert list[0..2] == [0,1,4]
+        list[0..2] = [6,6,6]
+        assert list == [6,6,6,3,4]
+        // 下标运算符等价与getAt方法或putAt方法
+        assert list.getAt(2) == 6
+        def user = new SubscriptUser(id: 1, name: 'Alex')
+        assert user[0] == 1
+        assert user[1] == 'Alex'
+        user[1] = 'Bob'
+        assert user.name == 'Bob'
     }
 
 }
