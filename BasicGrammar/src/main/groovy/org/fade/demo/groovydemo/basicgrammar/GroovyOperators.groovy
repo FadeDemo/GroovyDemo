@@ -1,5 +1,6 @@
 package org.fade.demo.groovydemo.basicgrammar
 
+import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 
 import java.util.regex.Matcher
@@ -22,6 +23,13 @@ class GroovyOperators {
         patternOperator()
         findOperator()
         matchOperator()
+        spreadOperatorExample()
+        spreadOperatorNullSafe()
+        spreadOperatorUsedInIterable()
+        spreadOperatorMultipleInvocation()
+        spreadMethodArguments()
+        spreadList()
+        spreadMap()
     }
 
     @EqualsAndHashCode
@@ -109,6 +117,113 @@ class GroovyOperators {
         if (m) {
             throw new RuntimeException("Should not reach that point!")
         }
+    }
+
+    static class Car {
+        String make
+        String model
+    }
+
+    static void spreadOperatorExample() {
+        // spread operator example
+        def cars = [
+                new Car(make: 'Peugeot', model: '508'),
+                new Car(make: 'Renault', model: 'Clio')]
+        def makes = cars*.make
+        assert makes == ['Peugeot', 'Renault']
+    }
+
+    static void spreadOperatorNullSafe() {
+        // 空安全的
+        assert null*.make == null
+    }
+
+    static class Component {
+        Long id
+        String name
+    }
+
+    static class CompositeObject implements Iterable<Component> {
+        def components = [
+                new Component(id: 1, name: 'Foo'),
+                new Component(id: 2, name: 'Bar')]
+
+        @Override
+        Iterator<Component> iterator() {
+            components.iterator()
+        }
+    }
+
+    static void spreadOperatorUsedInIterable() {
+        // 能被用在实现了Iterable接口的类上
+        def composite = new CompositeObject()
+        assert composite*.id == [1,2]
+        assert composite*.name == ['Foo','Bar']
+    }
+
+    static class Make {
+        String name
+        List<Model> models
+    }
+
+    @Canonical
+    static class Model {
+        String name
+    }
+
+    static void spreadOperatorMultipleInvocation() {
+        // spread operator multiple invocation
+        def cars = [
+                new Make(name: 'Peugeot',
+                        models: [new Model('408'), new Model('508')]),
+                new Make(name: 'Renault',
+                        models: [new Model('Clio'), new Model('Captur')])
+        ]
+        def models = cars*.models*.name
+        assert models == [['408', '508'], ['Clio', 'Captur']]
+        // or use collectNested instead
+        cars = [
+                [
+                        new Car(make: 'Peugeot', model: '408'),
+                        new Car(make: 'Peugeot', model: '508')
+                ], [
+                        new Car(make: 'Renault', model: 'Clio'),
+                        new Car(make: 'Renault', model: 'Captur')
+                ]
+        ]
+        models = cars.collectNested{ it.model }
+        assert models == [['408', '508'], ['Clio', 'Captur']]
+    }
+
+    static int function(int x, int y, int z) {
+        x*y+z
+    }
+
+    static void spreadMethodArguments() {
+        // 展开方法参数
+        def args = [4,5,6]
+        assert function(*args) == 26
+        // 可以混用
+        args = [4]
+        assert function(*args,5,6) == 26
+    }
+
+    static void spreadList() {
+        // 展开list
+        def items = [4,5]
+        def list = [1,2,3,*items,6]
+        assert list == [1,2,3,4,5,6]
+    }
+
+    static void spreadMap() {
+        // 展开map
+        def m1 = [c:3, d:4]
+        def map = [a:1, b:2, *:m1]
+        assert map == [a:1, b:2, c:3, d:4]
+        // map中的展开是会受位置影响的
+        m1 = [c:3, d:4]
+        map = [a:1, b:2, *:m1, d: 8]
+        assert map == [a:1, b:2, c:3, d:8]
     }
 
 }
