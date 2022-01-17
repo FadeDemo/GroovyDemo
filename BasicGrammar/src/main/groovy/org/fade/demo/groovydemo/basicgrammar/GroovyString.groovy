@@ -73,6 +73,21 @@ abc'''
         def key = "a"
         def m = ["${key}": "letter ${key}"]
         assert m["a"] == null
+        def n = """test
+test'"""
+        println n
+        def name = 'Groovy'
+        def template = """
+    Dear Mr ${name},
+
+    You're the winner of the lottery!
+
+    Yours sincerly,
+
+    Dave
+"""
+        assert template.toString().contains('Groovy')
+
         // 斜杠字符串
         def slashString = /abc/
         println slashString
