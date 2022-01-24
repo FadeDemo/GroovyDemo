@@ -9,6 +9,8 @@ package org.fade.demo.groovydemo.basicgrammar
 class GroovyClosure {
 
     static void main(String[] args) {
+        defineClosure()
+        closureAsAnObject()
         example()
         receiveParameter()
         receiveImplicitParameter()
@@ -16,6 +18,33 @@ class GroovyClosure {
         useInMethod()
         closureWithList()
         closureWithMap()
+        Enclosing enclosing = new Enclosing()
+        enclosing.run()
+        NestedClosures nestedClosures = new NestedClosures()
+        nestedClosures.run()
+        changeDelegateOfClosure()
+    }
+
+    static void defineClosure() {
+        // 无参
+        def clos = { println "Hello Closure" }
+        clos()
+        // 有参，未指定参数
+        clos = { it -> println it }
+        clos("Hello Closure")
+        // 有参，指定参数
+        clos = { String it -> println it }
+        clos("Hello Closure")
+    }
+
+    static void closureAsAnObject() {
+        def listener = { e -> println "Clicked on $e.source" }
+        assert listener instanceof Closure
+        Closure callback = { println 'Done!' }
+        callback()
+        Closure<Boolean> isTextFile = {
+            File it -> it.name.endsWith('.txt')
+        }
     }
 
     static void example() {
@@ -62,6 +91,43 @@ class GroovyClosure {
         def mp = ["TopicName" : "Maps", "TopicDescription" : "Methods in Maps"]
         mp.each {println it}
         mp.each {println "${it.key} maps to: ${it.value}"}
+    }
+
+    static class Enclosing {
+        void run() {
+            def whatIsThisObject = { getThisObject() }
+            assert whatIsThisObject() == this
+            def whatIsThis = { this }
+            assert whatIsThis() == this
+        }
+    }
+
+    static class NestedClosures {
+        void run() {
+            def nestedClosures = {
+                def cl = { owner }
+                cl()
+            }
+            assert nestedClosures() == nestedClosures
+        }
+    }
+
+    static class Person {
+        String name
+    }
+
+    static class Thing {
+        String name
+    }
+
+    static void changeDelegateOfClosure() {
+        def p = new Person(name: 'Norman')
+        def t = new Thing(name: 'Teapot')
+        def upperCasedName = { delegate.name.toUpperCase() }
+        upperCasedName.delegate = p
+        assert upperCasedName() == 'NORMAN'
+        upperCasedName.delegate = t
+        assert upperCasedName() == 'TEAPOT'
     }
 
 }
