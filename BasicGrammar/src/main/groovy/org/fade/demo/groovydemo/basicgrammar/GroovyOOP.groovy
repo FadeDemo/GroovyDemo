@@ -194,3 +194,29 @@ def method(BigInteger bi) { 'BigInteger' }
 
 assert method(35) == 'Long'
 
+// 列出一个类的所有属性
+class Person {
+    String name
+    int age
+}
+def p = new Person()
+assert p.properties.keySet().containsAll(['name','age'])
+println p.properties
+
+// 没有定义属性，但有JavaBean规范的getter和setter，Groovy也会识别属性
+// 但也有局限性，没有真正承载数据的属性
+class PseudoProperties {
+    // a pseudo property "name"
+    void setName(String name) {}
+    String getName() {}
+
+    // a pseudo read-only property "age"
+    int getAge() { 42 }
+
+    // a pseudo write-only property "groovy"
+    void setGroovy(boolean groovy) {  }
+}
+def p1 = new PseudoProperties()
+p1.name = 'Foo'
+assert p1.age == 42
+p1.groovy = true
