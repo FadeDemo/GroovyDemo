@@ -1,6 +1,7 @@
 package org.fade.demo.groovydemo.basicgrammar
 
 import groovy.transform.AnnotationCollector
+import groovy.transform.AnnotationCollectorMode
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -19,6 +20,7 @@ class GroovyAnnotation {
 //        closureAsValue()
         declareMetaAnnotation()
         overrideMetaAnnotationParameter()
+        testAnnotationCollectorModeAttribute()
     }
 
     static void closureAsValue() {
@@ -36,6 +38,15 @@ class GroovyAnnotation {
         println Joe.getAnnotation(Foo).value()
         println Joe.getAnnotation(Bar).value()
         println Joe.getAnnotation(Foo).test()
+    }
+
+    static void testAnnotationCollectorModeAttribute() {
+        println Jack.getAnnotation(Bar).value()
+        try {
+            println Lucy.getAnnotation(Bar).value()
+        } catch(Exception e) {
+            e.printStackTrace()
+        }
     }
 
 }
@@ -133,3 +144,22 @@ class MyTransactionalService {
 @FooBar(value = "a", test = 10)
 class Joe {}
 
+/**
+ * <p>出现重复注解，默认会报错</p>
+ * */
+@FooBar(value = "a", test = 10)
+@Bar(value = "b")
+class Lucy {}
+
+/**
+ * <p>使用{@link AnnotationCollector#mode}
+ * 解决出现重复注解的问题</p>
+ * */
+@Foo(value = "a", test = 5)
+@Bar(value = "b")
+@AnnotationCollector(mode = AnnotationCollectorMode.PREFER_COLLECTOR)
+@interface FooBarV2 {}
+
+@FooBarV2
+@Bar(value = "c")
+class Jack {}
