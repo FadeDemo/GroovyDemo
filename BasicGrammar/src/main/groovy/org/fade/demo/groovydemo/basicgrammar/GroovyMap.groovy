@@ -18,6 +18,21 @@ class GroovyMap {
         assert !e.containsKey(d)
         def f = [(d): 1]
         assert f.containsKey(d)
+        mapCoercion()
+    }
+
+    static void mapCoercion() {
+        def map
+        // 此时Map中key是方法名，value是方法的实现
+        map = [
+                i: 10,
+                hasNext: { map.i > 0 },
+                next: { map.i-- },
+        ]
+        def iter = map as Iterator
+        while (iter.hasNext()) {
+            println iter.next()
+        }
     }
 
 }
