@@ -107,6 +107,13 @@ def thirdMethod(param) { println "$param passed" }
 thirdMethod(1)
 thirdMethod("str")
 
+// 支持不设置返回值类型和参数类型
+private test(a, b) {
+    a + b
+}
+
+println test(1, 2)
+
 // 以方法内执行的最后一条语句的值作为返回值
 
 String anotherMethod() { 'another method called' }
