@@ -254,8 +254,8 @@ class GroovyClosure {
             factorial.trampoline(n - 1, n * accu)
         }
         factorial = factorial.trampoline()
-        assert factorial(1)    == 1
-        assert factorial(3)    == 1 * 2 * 3
+        assert factorial(1) == 1
+        assert factorial(3) == 1 * 2 * 3
         assert factorial(1000)
     }
 
