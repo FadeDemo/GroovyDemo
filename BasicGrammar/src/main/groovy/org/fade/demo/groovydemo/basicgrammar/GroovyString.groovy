@@ -111,6 +111,33 @@ bc/
         dollarSlashString = $/ab
 c/$
         println dollarSlashString
+        typeCoercion()
+    }
+
+    static void typeCoercion() {
+        // 是以枚举常量的名字匹配的
+        State st = 'up'
+        assert st == State.up
+        def val = "up"
+        st = "${val}"
+        assert st == State.up
+        ComplexState state = 'UP'
+        assert state == ComplexState.UP
+    }
+
+    enum State {
+        up,
+        down
+    }
+
+    enum ComplexState {
+        UP("1", "up"),DOWN("2", "down")
+        String key
+        String value
+        ComplexState(String key, String value) {
+            this.key = key
+            this.value = value
+        }
     }
 
 }
