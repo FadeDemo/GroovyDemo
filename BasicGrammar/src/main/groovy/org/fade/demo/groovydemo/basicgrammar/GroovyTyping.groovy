@@ -2,6 +2,10 @@ package org.fade.demo.groovydemo.basicgrammar
 
 import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.FirstParam
+
+import java.util.function.Predicate
 
 // 使用@TypeChecked开启类型检查
 // 声明在类上会为这个类的所有内容进行类型检查
@@ -48,7 +52,59 @@ println list
 Person1 map = [firstName:'Ada', lastName:'Lovelace']
 println map
 
+// 要在静态Groovy中推断出闭包参数的类型有三种方法：
+// 法一：显示指定闭包参数类型
+class Person2 {
+    String name
+    int age
+}
 
+void inviteIf(Person2 p, Closure<Boolean> predicate) {
+    if (predicate.call(p)) {
+        // send invite
+        // ...
+    }
+}
+
+@groovy.transform.TypeChecked
+void failCompilation() {
+    Person2 p = new Person2(name: 'Gerard', age: 55)
+    inviteIf(p) { Person2 it ->
+        it.age >= 18 // No such property: age
+    }
+}
+
+// 法二：使用SAM类型推断
+void inviteIf1(Person2 p, Predicate<Person> predicate) {
+    if (predicate.call(p)) {
+        // send invite
+        // ...
+    }
+}
+
+@groovy.transform.TypeChecked
+void failCompilation1() {
+    Person2 p = new Person2(name: 'Gerard', age: 55)
+    inviteIf1(p) {
+        it.age >= 18 // No such property: age
+    }
+}
+
+// 法三：使用@ClousureParams注解
+void inviteIf3(Person2 p, @ClosureParams(FirstParam.class) Closure<Boolean> predicate) {
+    if (predicate.call(p)) {
+        // send invite
+        // ...
+    }
+}
+
+@groovy.transform.TypeChecked
+void failCompilation3() {
+    Person2 p = new Person2(name: 'Gerard', age: 55)
+    inviteIf3(p) {
+        it.age >= 18 // No such property: age
+    }
+}
 
 
 
